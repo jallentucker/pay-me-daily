@@ -12,30 +12,22 @@ var makeFanduelArray = function(dataString) {
 	return fanduelArray;
 };
 
-var makeQBsArray = function(dataString) {
-	var playerStrings = dataString.split('\r\n');
-	filesRead++;
-	return playerStrings.map(function(playerString) {
-		var playerArray = playerString.split('\t');
-		return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[14])];
+var preparePlayersArray = function(dataString, column) {
+	var playersArray = makePlayersArray(dataString, column);
+	playersArray = addSalaries(playersArray);
+	playersArray = trimPlayersArray(playersArray);
+	playersArray.sort(function(a, b) {
+		return b[1] - a[1];
 	});
+	return playersArray;
 };
 
-var makePlayersArray = function(dataString) {
+var makePlayersArray = function(dataString, column) {
 	var playerStrings = dataString.split('\r\n');
 	filesRead++;
 	return playerStrings.map(function(playerString) {
 		var playerArray = playerString.split('\t');
-		return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[13])];
-	});
-};
-
-var makeKsArray = function(dataString) {
-	var playerStrings = dataString.split('\r\n');
-	filesRead++;
-	return playerStrings.map(function(playerString) {
-		var playerArray = playerString.split('\t');
-		return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[15])];
+		return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[column - 1])];
 	});
 };
 
@@ -78,33 +70,23 @@ var pickTeam = function() {
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
 	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, qbData) {
-		qbs = makeQBsArray(qbData);
-		qbs = addSalaries(qbs);
-		qbs = trimPlayersArray(qbs);
+		qbs = preparePlayersArray(qbData, 15);
 		console.log(qbs);
 	});
 	fs.readFile('rbs.txt', { encoding: 'utf8' }, function(err, rbData) {
-		rbs = makePlayersArray(rbData);
-		rbs = addSalaries(rbs);
-		rbs = trimPlayersArray(rbs);
+		rbs = preparePlayersArray(rbData, 14);
 		console.log(rbs);
 	});
 	fs.readFile('wrs.txt', { encoding: 'utf8' }, function(err, wrData) {
-		wrs = makePlayersArray(wrData);
-		wrs = addSalaries(wrs);
-		wrs = trimPlayersArray(wrs);
+		wrs = preparePlayersArray(wrData, 14);
 		console.log(wrs);
 	});
 	fs.readFile('tes.txt', { encoding: 'utf8' }, function(err, teData) {
-		tes = makePlayersArray(teData);
-		tes = addSalaries(tes);
-		tes = trimPlayersArray(tes);
+		tes = preparePlayersArray(teData, 14);
 		console.log(tes);
 	});
 	fs.readFile('ks.txt', { encoding: 'utf8' }, function(err, kData) {
-		ks = makeKsArray(kData);
-		ks = addSalaries(ks);
-		ks = trimPlayersArray(ks);
+		ks = preparePlayersArray(kData, 16);
 		console.log(ks);
 	});
 	// fs.readFile('ds.txt', { encoding: 'utf8' }, function(err, dData) {
