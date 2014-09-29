@@ -8,27 +8,8 @@ var wideoutProjectionColumn = 14;
 var tightEndProjectionColumn = 14;
 var kickerProjectionColumn = 16;
 var fanduelArray, quarterbacks, tailbacks, wideouts, tightEnds, kickers, defenses;
-var quarterback = [];
-var tailbackOne = [];
-var tailbackTwo = [];
-var wideoutOne = [];
-var wideoutTwo = [];
-var wideoutThree = [];
-var tightEnd = [];
-var kicker = [];
-var defense = [];
-var quarterbackIndex = 0;
-var tailbackOneIndex = 0;
-var tailbackTwoIndex = 1;
-var wideoutIndex = 0;
-var tightEndIndex = 0;
-var kickerIndex = 0;
-var salaryCap = 45000;
-var capSpace = salaryCap;
-var totalProjection = 0;
-var bestQuarterback, bestTailbackOne, bestTailbackTwo, bestWideoutOne, bestTightEnd, bestKicker;
+var salaryCap = 55300;
 var bestTotalProjection = 0;
-var bestCapSpace;
 
 var makeFanduelArray = function(dataString) {
 	var json = JSON.parse(dataString);
@@ -95,6 +76,8 @@ var itsOver = function() {
 	console.log('RB1 is ' + bestTailbackOne[0]);
 	console.log('RB2 is ' + bestTailbackTwo[0]);
 	console.log('WR1 is ' + bestWideoutOne[0]);
+	console.log('WR2 is ' + bestWideoutTwo[0]);
+	console.log('WR3 is ' + bestWideoutThree[0]);
 	console.log('TE is ' + bestTightEnd[0]);
 	console.log('K is ' + bestKicker[0]);
 	console.log('Total projection is ' + bestTotalProjection + ' points');
@@ -125,7 +108,9 @@ var pickBestPossiblePlayers = function() {
 		};
 
 		var incrementTailbackTwo = function() {
-			wideoutIndex = 0;
+			wideoutOneIndex = 0;
+			wideoutTwoIndex = 1;
+			wideoutThreeIndex = 2;
 			tailbackTwoIndex++;
 			if (tailbacks[tailbackTwoIndex]) {
 				pickBestPossiblePlayers();
@@ -134,13 +119,34 @@ var pickBestPossiblePlayers = function() {
 			}
 		};
 
-		var incrementWideout = function() {
-			tightEndIndex = 0;
-			wideoutIndex++;
-			if (wideouts[wideoutIndex]) {
+		var incrementWideoutOne = function() {
+			wideoutOneIndex++;
+			wideoutTwoIndex = wideoutOneIndex + 1;
+			wideoutThreeIndex = wideoutTwoIndex + 1;
+			if (wideouts[wideoutThreeIndex]) {
 				pickBestPossiblePlayers();
 			} else {
 				incrementTailbackTwo();
+			}
+		};
+
+		var incrementWideoutTwo = function() {
+			wideoutTwoIndex++;
+			wideoutThreeIndex = wideoutTwoIndex + 1;
+			if (wideouts[wideoutThreeIndex]) {
+				pickBestPossiblePlayers();
+			} else {
+				incrementWideoutOne();
+			}
+		};
+
+		var incrementWideoutThree = function() {
+			tightEndIndex = 0;
+			wideoutThreeIndex++;
+			if (wideouts[wideoutThreeIndex]) {
+				pickBestPossiblePlayers();
+			} else {
+				incrementWideoutTwo();
 			}
 		};
 
@@ -150,28 +156,40 @@ var pickBestPossiblePlayers = function() {
 			if (tightEnds[tightEndIndex]) {
 				pickBestPossiblePlayers();
 			} else {
-				incrementWideout();
+				incrementWideoutThree();
 			}
 		};
 
 		if (kickerIndex === 0) {
 			if (tightEndIndex === 0) {
-				if (wideoutIndex === 0) {
-					if (tailbackOneIndex === 0) {
-						quarterbackIndex++;
-						if (quarterbacks[quarterbackIndex]) {
-							pickBestPossiblePlayers();
+				if (wideoutThreeIndex === 2) {
+					if (wideoutTwoIndex === 1) {
+						if (wideoutOneIndex === 0) {
+							if (tailbackTwoIndex === 1) {
+								if (tailbackOneIndex === 0) {
+									quarterbackIndex++;
+									if (quarterbacks[quarterbackIndex]) {
+										pickBestPossiblePlayers();
+									} else {
+										itsOver();
+									}
+								} else {
+									incrementQuarterback();
+								}
+							} else {
+								incrementTailbackOne();
+							}
 						} else {
-							itsOver();
+							incrementTailbackTwo();
 						}
 					} else {
-						incrementQuarterback();
+						incrementWideoutOne();
 					}
 				} else {
-					incrementTailbackOne();
+					incrementWideoutTwo();
 				}
 			} else {
-				incrementWideout();
+				incrementWideoutThree();
 			}
 		} else {
 			incrementTightEnd();
@@ -181,17 +199,21 @@ var pickBestPossiblePlayers = function() {
 	quarterback = quarterbacks[quarterbackIndex];
 	tailbackOne = tailbacks[tailbackOneIndex];
 	tailbackTwo = tailbacks[tailbackTwoIndex];
-	wideoutOne = wideouts[wideoutIndex];
+	wideoutOne = wideouts[wideoutOneIndex];
+	wideoutTwo = wideouts[wideoutTwoIndex];
+	wideoutThree = wideouts[wideoutThreeIndex];
 	tightEnd = tightEnds[tightEndIndex];
 	kicker = kickers[kickerIndex];
-	capSpace = salaryCap - quarterback[2] - tailbackOne[2] - tailbackTwo[2] - wideoutOne[2] - tightEnd[2] - kicker[2];
+	capSpace = salaryCap - quarterback[2] - tailbackOne[2] - tailbackTwo[2] - wideoutOne[2] - wideoutTwo[2] - wideoutThree[2] - tightEnd[2] - kicker[2];
 	if (capSpace >= 0) {
-		totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + tightEnd[1] + kicker[1];
+		totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + wideoutTwo[1] + wideoutThree[1] + tightEnd[1] + kicker[1];
 		if (totalProjection > bestTotalProjection) {
 			bestQuarterback = quarterback;
 			bestTailbackOne = tailbackOne;
 			bestTailbackTwo = tailbackTwo;
 			bestWideoutOne = wideoutOne;
+			bestWideoutTwo = wideoutTwo;
+			bestWideoutThree = wideoutThree;
 			bestTightEnd = tightEnd;
 			bestKicker = kicker;
 			bestTotalProjection = totalProjection;
@@ -211,27 +233,42 @@ var pickBestPossiblePlayers = function() {
 				pickBestPossiblePlayers();
 			} else {
 				tightEndIndex = 0;
-				wideoutIndex++;
-				if (wideouts[wideoutIndex]) {
+				wideoutThreeIndex++;
+				if (wideouts[wideoutThreeIndex]) {
 					pickBestPossiblePlayers();
 				} else {
-					wideoutIndex = 0;
-					tailbackTwoIndex++;
-					if (tailbacks[tailbackTwoIndex]) {
+					wideoutTwoIndex++;
+					wideoutThreeIndex = wideoutTwoIndex + 1;
+					if (wideouts[wideoutThreeIndex]) {
 						pickBestPossiblePlayers();
 					} else {
-						tailbackOneIndex++;
-						tailbackTwoIndex = tailbackOneIndex + 1;
-						if (tailbacks[tailbackTwoIndex]) {
+						wideoutOneIndex++;
+						wideoutTwoIndex = wideoutOneIndex + 1;
+						wideoutThreeIndex = wideoutTwoIndex + 1;
+						if (wideouts[wideoutThreeIndex]) {
 							pickBestPossiblePlayers();
 						} else {
-							tailbackOneIndex = 0;
-							tailbackTwoIndex = 1;
-							quarterbackIndex++;
-							if (quarterbacks[quarterbackIndex]) {
+							wideoutOneIndex = 0;
+							wideoutTwoIndex = 1;
+							wideoutThreeIndex = 2;
+							tailbackTwoIndex++;
+							if (tailbacks[tailbackTwoIndex]) {
 								pickBestPossiblePlayers();
 							} else {
-								itsOver();
+								tailbackOneIndex++;
+								tailbackTwoIndex = tailbackOneIndex + 1;
+								if (tailbacks[tailbackTwoIndex]) {
+									pickBestPossiblePlayers();
+								} else {
+									tailbackOneIndex = 0;
+									tailbackTwoIndex = 1;
+									quarterbackIndex++;
+									if (quarterbacks[quarterbackIndex]) {
+										pickBestPossiblePlayers();
+									} else {
+										itsOver();
+									}
+								}
 							}
 						}
 					}
@@ -241,116 +278,74 @@ var pickBestPossiblePlayers = function() {
 	}
 };
 
+var checkIfZero = function(index) {
+	if (index === 0) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
 var pickTeam = function() {
 	if (filesRead === 5) {
 		quarterbacks = prepareEfficientArray(quarterbacks);
 		// tailbacks = prepareEfficientArray(tailbacks);
-		wideouts = prepareEfficientArray(wideouts);
+		// wideouts = prepareEfficientArray(wideouts);
 		tightEnds = prepareEfficientArray(tightEnds);
 		kickers = prepareEfficientArray(kickers);
-		pickBestPossiblePlayers();
+		// pickBestPossiblePlayers();
+		var quarterbackIndex = 1;
+		var tailbackOneIndex = 3;
+		var tailbackTwoIndex = 4;
+		var wideoutOneIndex = 0;
+		var wideoutTwoIndex = 1;
+		var wideoutThreeIndex = 2;
+		for (var tightEndIndex = 0; tightEndIndex < tightEnds.length; tightEndIndex++) {
+			for (var kickerIndex = 0; kickerIndex < kickers.length; kickerIndex++) {
+				var quarterback = quarterbacks[quarterbackIndex];
+				var tailbackOne = tailbacks[tailbackOneIndex];
+				var tailbackTwo = tailbacks[tailbackTwoIndex];
+				var wideoutOne = wideouts[wideoutOneIndex];
+				var wideoutTwo = wideouts[wideoutTwoIndex];
+				var wideoutThree = wideouts[wideoutThreeIndex];
+				var tightEnd = tightEnds[tightEndIndex];
+				var kicker = kickers[kickerIndex];
+				var capSpace = salaryCap - quarterback[2] - tailbackOne[2] - tailbackTwo[2] - wideoutOne[2] - wideoutTwo[2] - wideoutThree[2] - tightEnd[2] - kicker[2];
+				if (capSpace >= 0) {
+					var totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + wideoutTwo[1] + wideoutThree[1] + tightEnd[1] + kicker[1];
+					if (totalProjection > bestTotalProjection) {
+						var bestQuarterback = quarterback;
+						var bestTailbackOne = tailbackOne;
+						var bestTailbackTwo = tailbackTwo;
+						var bestWideoutOne = wideoutOne;
+						var bestWideoutTwo = wideoutTwo;
+						var bestWideoutThree = wideoutThree;
+						var bestTightEnd = tightEnd;
+						var bestKicker = kicker;
+						var bestTotalProjection = totalProjection;
+						var bestCapSpace = capSpace;
+					}
+					var tightEndBoolean = checkIfZero(tightEndIndex);
+					var kickerBoolean = checkIfZero(kickerIndex);
+					switch ([tightEndBoolean, kickerBoolean]) {
+						case [true, true]:
+							console.log('true, true');
+							break;
+						case [true, false]:
+							console.log('true, false');
+							break;
+						case [false, true]:
+							console.log('false, true');
+							break;
+						case [false, false]:
+							console.log('false, false');
+							break;
+					}
+				}
+			}
+		}
 	}
 };
-
-// var updateEfficientWRsArray = function(inefficientWRs) {
-// 	wrs = inefficientWRs;
-// 	for (s = 0; s < wrs.length; s++) {
-// 		if(wrs[s] === wr1) {
-// 			wrs.splice(s, 1);
-// 			s--;
-// 		}
-// 	}
-// 	return prepareEfficientArray(wrs);
-// };
-
-// var pickTeam = function() {
-// 	var capSpace = salaryCap;
-// 	if (filesRead === 5) {
-// 		console.log('picking team now');
-// 		qbs = prepareEfficientArray(qbs);
-// 		console.log(qbs);
-// 		wrs = prepareEfficientArray(wrs);
-// 		console.log(wrs);
-// 		for (var i = 0; i < qbs.length; i++) {
-// 			qb = qbs[i];
-// 			capSpace = capSpace - qb[2];
-// 			tes = prepareEfficientArray(tes);
-// 			for (var j = 0; j < tes.length; j++) {
-// 				te = tes[j];
-// 				capSpace = capSpace - te[2];
-// 				ks = prepareEfficientArray(ks);
-// 				for (var l = 0; l < ks.length; l++) {
-// 					k = ks[l];
-// 					capSpace = capSpace - k[2];
-// 					var inefficientRBs = rbs;
-// 					rbs = prepareEfficientArray(rbs);
-// 					for (var m = 0; m < rbs.length; m++) {
-// 						rb1 = rbs[m];
-// 						capSpace = capSpace - rb1[2];
-// 						rbs = inefficientRBs;
-// 						for (r = 0; r < rbs.length; r++) {
-// 							if (rbs[r] === rb1) {
-// 								rbs.splice(r, 1);
-// 								r--;
-// 							}
-// 						}
-// 						rbs = prepareEfficientArray(rbs);
-// 						for (var n = 0; n < rbs.length; n++) {
-// 							rb2 = rbs[n];
-// 							capSpace = capSpace - rb2[2];
-// 							var inefficientWRs = wrs;
-// 							wrs = prepareEfficientArray(wrs);
-// 							for (var o = 0; o < wrs.length; o++) {
-// 								if (wrs[o][2] <= capSpace) {
-// 									wr1 = wrs[o];
-// 									capSpace = capSpace - wr1[2];
-// 									wrs = updateEfficientWRsArray(inefficientWRs);
-// 									for (var p = 0; p < wrs.length; p++) {
-// 										if (wrs[p][2] <= capSpace) {
-// 											wr2 = wrs[p];
-// 											capSpace = capSpace - wr2[2];
-// 											wrs = inefficientWRs;
-// 											for (t = 0; t < wrs.length; t++) {
-// 												if(wrs[t] === wr1 || wrs[t] === wr2) {
-// 													wrs.splice(t, 1);
-// 													t--;
-// 												}
-// 											}
-// 											wrs = prepareEfficientArray(wrs);
-// 											for (var q = 0; q < wrs.length; q++) {
-// 												if (wrs[q][2] <= capSpace) {
-// 													wr3 = wrs[q];
-// 													capSpace = capSpace - wr3[2];
-// 													console.log('QB is ' + qb[0]);
-// 													console.log('RB1 is ' + rb1[0]);
-// 													console.log('RB2 is ' + rb2[0]);
-// 													console.log('WR1 is ' + wr1[0]);
-// 													console.log('WR2 is ' + wr2[0]);
-// 													console.log('WR3 is ' + wr3[0]);
-// 													console.log('TE is ' + te[0]);
-// 													console.log('K is ' + k[0]);
-// 													console.log('Cap Space is ' + capSpace);
-// 													q = wrs.length;
-// 													p = wrs.length;
-// 													o = wrs.length;
-// 													n = rbs.length;
-// 													m = rbs.length;
-// 													l = ks.length;
-// 													j = tes.length;
-// 													i = qbs.length;
-// 												}
-// 											}
-// 										}
-// 									}
-// 								}
-// 							}
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// };
 
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
