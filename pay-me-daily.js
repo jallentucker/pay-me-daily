@@ -8,7 +8,7 @@ var wideoutProjectionColumn = 14;
 var tightEndProjectionColumn = 14;
 var kickerProjectionColumn = 16;
 var fanduelArray, quarterbacks, tailbacks, wideouts, tightEnds, kickers, defenses;
-var salaryCap = 55300;
+var salaryCap = 55200;
 var bestTotalProjection = 0;
 
 var makeFanduelArray = function(dataString) {
@@ -98,8 +98,8 @@ var checkIfTwo = function(index) {
 var pickTeam = function() {
 	if (filesRead === 5) {
 		quarterbacks = prepareEfficientArray(quarterbacks);
-		// tailbacks = prepareEfficientArray(tailbacks);
-		// wideouts = prepareEfficientArray(wideouts);
+		tailbacks = prepareEfficientArray(tailbacks);
+		wideouts = prepareEfficientArray(wideouts);
 		tightEnds = prepareEfficientArray(tightEnds);
 		kickers = prepareEfficientArray(kickers);
 		// pickBestPossiblePlayers();
@@ -191,6 +191,11 @@ var pickTeam = function() {
 
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
+	fanduelArray.forEach(function(array) {
+		if (array[1] === 'Alex Smith') {
+			console.log(array);
+		}
+	});
 	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
 		quarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
 		pickTeam();
