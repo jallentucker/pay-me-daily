@@ -7,7 +7,7 @@ var tailbackProjectionColumn = 14;
 var wideoutProjectionColumn = 14;
 var tightEndProjectionColumn = 14;
 var kickerProjectionColumn = 16;
-var fanduelArray, quarterbacks, tailbacks, wideouts, tightEnds, kickers, defenses;
+var fanduelArray, allQuarterbacks, allTailbacks, allWideouts, allTightEnds, allKickers, allDefenses;
 var salaryCap = 55200;
 var bestTotalProjection = 0;
 
@@ -62,14 +62,38 @@ var trimPlayersArray = function(playersArray) {
 };
 
 var prepareEfficientArray = function(playersArray) {
+	var newArray = [playersArray[0]];
 	for (var i = 1; i < playersArray.length; i++) {
-		if (playersArray[i][2] >= playersArray[i - 1][2]) {
-			playersArray.splice(i, 1);
-			i--;
+		if (playersArray[i][2] < newArray[newArray.length - 1][2]) {
+			newArray.push(playersArray[i]);
 		}
 	}
-	return playersArray;
+	return newArray;
 };
+
+var removeOnePlayer = function(playersArray, playerArray) {
+	var newArray = [];
+	for (var i = 0; i < playersArray.length; i++) {
+		if (playersArray[i] !== playerArray) {
+			newArray.push(playersArray[i]);
+		}
+	}
+	return newArray;
+};
+
+var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
+	var newArray = [];
+	var bool = false;
+	for (var i = 0; i < fullArray.length; i++) {
+		if (bool && _.contains(playersArray, fullArray[i])) {
+			newArray.push(fullArray[i]);
+		}
+		if (fullArray[i] === playerArray) {
+			bool = true;
+		}
+	}
+	return newArray;
+}
 
 var checkIfZero = function(index) {
 	if (index === 0) {
@@ -97,17 +121,20 @@ var checkIfTwo = function(index) {
 
 var pickTeam = function() {
 	if (filesRead === 5) {
-		quarterbacks = prepareEfficientArray(quarterbacks);
-		tailbacks = prepareEfficientArray(tailbacks);
-		wideouts = prepareEfficientArray(wideouts);
-		tightEnds = prepareEfficientArray(tightEnds);
-		kickers = prepareEfficientArray(kickers);
+		var quarterbacks = prepareEfficientArray(allQuarterbacks);
+		var tailbacks = prepareEfficientArray(allTailbacks);
+		var wideouts = prepareEfficientArray(allWideouts);
+		var tightEnds = prepareEfficientArray(allTightEnds);
+		var kickers = prepareEfficientArray(allKickers);
 		// pickBestPossiblePlayers();
 		for (var quarterbackIndex = 0; quarterbackIndex < quarterbacks.length; quarterbackIndex++) {
 			// console.log('quarterbackIndex = ' + quarterbackIndex);
 			for (var tailbackOneIndex = 0; tailbackOneIndex < tailbacks.length; tailbackOneIndex++) {
 				// console.log('tailbackOneIndex = ' + tailbackOneIndex);
-				for (var tailbackTwoIndex = tailbackOneIndex + 1; tailbackTwoIndex < tailbacks.length; tailbackTwoIndex++) {
+				var allButOneTailback = removeOnePlayer(allTailbacks, tailbacks[tailbackOneIndex]);
+				var tailbacksTwo = prepareEfficientArray(allButOneTailback);
+				tailbacksTwo = takeTopOffPlayersArray(tailbacksTwo, allTailbacks, tailbacks[tailbackOneIndex]);
+				for (var tailbackTwoIndex = 0; tailbackTwoIndex < tailbacksTwo.length; tailbackTwoIndex++) {
 					// console.log('tailbackTwoIndex = ' + tailbackTwoIndex);
 					for (var wideoutOneIndex = 0; wideoutOneIndex < wideouts.length; wideoutOneIndex++) {
 						// console.log('wideoutOneIndex = ' + wideoutOneIndex);
@@ -122,7 +149,7 @@ var pickTeam = function() {
 										var quarterback = quarterbacks[quarterbackIndex];
 										// console.log('quarterback = ' + quarterback);
 										var tailbackOne = tailbacks[tailbackOneIndex];
-										var tailbackTwo = tailbacks[tailbackTwoIndex];
+										var tailbackTwo = tailbacksTwo[tailbackTwoIndex];
 										var wideoutOne = wideouts[wideoutOneIndex];
 										var wideoutTwo = wideouts[wideoutTwoIndex];
 										var wideoutThree = wideouts[wideoutThreeIndex];
@@ -152,7 +179,7 @@ var pickTeam = function() {
 													if (checkIfTwo(wideoutThreeIndex) === 0) {
 														if (checkIfOne(wideoutTwoIndex) === 0) {
 															if (checkIfZero(wideoutOneIndex) === 0) {
-																if (checkIfOne(tailbackTwoIndex) === 0) {
+																if (checkIfZero(tailbackTwoIndex) === 0) {
 																	if (checkIfZero(tailbackOneIndex) === 0) {
 																		if (checkIfZero(quarterbackIndex) === 0) {
 																			console.log(bestTeam);
@@ -163,7 +190,7 @@ var pickTeam = function() {
 																	}
 																	tailbackOneIndex = tailbacks.length;
 																}
-																tailbackTwoIndex = tailbacks.length;
+																tailbackTwoIndex = tailbacksTwo.length;
 															}
 															wideoutOneIndex = wideouts.length;
 														}
@@ -191,29 +218,24 @@ var pickTeam = function() {
 
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
-	fanduelArray.forEach(function(array) {
-		if (array[1] === 'Alex Smith') {
-			console.log(array);
-		}
-	});
 	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
-		quarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
+		allQuarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
 		pickTeam();
 	});
 	fs.readFile('rbs.txt', { encoding: 'utf8' }, function(err, tailbackData) {
-		tailbacks = preparePlayersArray(tailbackData, tailbackProjectionColumn);
+		allTailbacks = preparePlayersArray(tailbackData, tailbackProjectionColumn);
 		pickTeam();
 	});
 	fs.readFile('wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
-		wideouts = preparePlayersArray(wideoutData, wideoutProjectionColumn);
+		allWideouts = preparePlayersArray(wideoutData, wideoutProjectionColumn);
 		pickTeam();
 	});
 	fs.readFile('tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
-		tightEnds = preparePlayersArray(tightEndData, tightEndProjectionColumn);
+		allTightEnds = preparePlayersArray(tightEndData, tightEndProjectionColumn);
 		pickTeam();
 	});
 	fs.readFile('ks.txt', { encoding: 'utf8' }, function(err, kickerData) {
-		kickers = preparePlayersArray(kickerData, kickerProjectionColumn);
+		allKickers = preparePlayersArray(kickerData, kickerProjectionColumn);
 		pickTeam();
 	});
 });
