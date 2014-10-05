@@ -101,6 +101,16 @@ var removeOnePlayer = function(playersArray, playerArray) {
 	return newArray;
 };
 
+var removeTwoPlayers = function(playersArray, playerArray1, playerArray2) {
+	var newArray = [];
+	for (var i = 0; i < playersArray.length; i++) {
+		if ((playersArray[i] !== playerArray1) && (playersArray[i] !== playerArray2)) {
+			newArray.push(playersArray[i]);
+		}
+	}
+	return newArray;
+};
+
 var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
 	var newArray = [];
 	var bool = false;
@@ -157,7 +167,11 @@ var pickTeam = function() {
 						wideoutsTwo = takeTopOffPlayersArray(wideoutsTwo, allWideouts, wideouts[wideoutOneIndex]);
 						for (var wideoutTwoIndex = 0; wideoutTwoIndex < wideoutsTwo.length; wideoutTwoIndex++) {
 							// console.log('wideoutTwoIndex = ' + wideoutTwoIndex);
-							for (var wideoutThreeIndex = wideoutTwoIndex + 1; wideoutThreeIndex < wideoutsTwo.length; wideoutThreeIndex++) {
+							var allButTwoWideouts = removeTwoPlayers(allWideouts, wideouts[wideoutOneIndex], wideoutsTwo[wideoutTwoIndex]);
+							var wideoutsThree = prepareEfficientArray(allButTwoWideouts);
+							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideouts[wideoutOneIndex]);
+							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideoutsTwo[wideoutTwoIndex]);
+							for (var wideoutThreeIndex = 0; wideoutThreeIndex < wideoutsThree.length; wideoutThreeIndex++) {
 								// console.log('wideoutThreeIndex = ' + wideoutThreeIndex);
 								for (var tightEndIndex = 0; tightEndIndex < tightEnds.length; tightEndIndex++) {
 									// console.log('tightEndIndex = ' + tightEndIndex);
@@ -170,7 +184,7 @@ var pickTeam = function() {
 											var tailbackTwo = tailbacksTwo[tailbackTwoIndex];
 											var wideoutOne = wideouts[wideoutOneIndex];
 											var wideoutTwo = wideoutsTwo[wideoutTwoIndex];
-											var wideoutThree = wideoutsTwo[wideoutThreeIndex];
+											var wideoutThree = wideoutsThree[wideoutThreeIndex];
 											var tightEnd = tightEnds[tightEndIndex];
 											var kicker = kickers[kickerIndex];
 											var defense = defenses[defenseIndex];
@@ -198,7 +212,7 @@ var pickTeam = function() {
 												if (checkIfZero(defenseIndex) === 0) {
 													if (checkIfZero(kickerIndex) === 0) {
 														if (checkIfZero(tightEndIndex) === 0) {
-															if (checkIfOne(wideoutThreeIndex) === 0) {
+															if (checkIfZero(wideoutThreeIndex) === 0) {
 																if (checkIfZero(wideoutTwoIndex) === 0) {
 																	if (checkIfZero(wideoutOneIndex) === 0) {
 																		if (checkIfZero(tailbackTwoIndex) === 0) {
@@ -218,7 +232,7 @@ var pickTeam = function() {
 																}
 																wideoutTwoIndex = wideoutsTwo.length;
 															}
-															wideoutThreeIndex = wideoutsTwo.length;
+															wideoutThreeIndex = wideoutsThree.length;
 														}
 														tightEndIndex = tightEnds.length;
 													}
