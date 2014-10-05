@@ -133,20 +133,11 @@ var checkIfZero = function(index) {
 	}
 };
 
-var checkIfOne = function(index) {
-	if (index === 1) {
-		return 0;
-	} else {
-		return 1;
-	}
-};
-
 var pickTeam = function() {
 	if (filesRead === 6) {
 		var quarterbacks = prepareEfficientArray(allQuarterbacks);
 		var tailbacks = prepareEfficientArray(allTailbacks);
 		var wideouts = prepareEfficientArray(allWideouts);
-		console.log(wideouts);
 		var tightEnds = prepareEfficientArray(allTightEnds);
 		var kickers = prepareEfficientArray(allKickers);
 		var defenses = prepareEfficientArray(allDefenses);
@@ -194,7 +185,6 @@ var pickTeam = function() {
 												var totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + wideoutTwo[1] + wideoutThree[1] + tightEnd[1] + kicker[1] + defense[1];
 												if (totalProjection > bestTotalProjection) {
 													console.log('totalProjection > bestTotalProjection');
-													console.log (quarterbackIndex + ' ' + tailbackOneIndex + ' ' + tailbackTwoIndex + ' ' + wideoutOneIndex + ' ' + wideoutTwoIndex + ' ' + wideoutThreeIndex + ' ' + tightEndIndex + ' ' + kickerIndex + ' ' + defenseIndex);
 													var bestQuarterback = quarterback;
 													var bestTailbackOne = tailbackOne;
 													var bestTailbackTwo = tailbackTwo;
@@ -205,7 +195,6 @@ var pickTeam = function() {
 													var bestKicker = kicker;
 													var bestDefense = defense;
 													var bestTeam = [bestQuarterback, bestTailbackOne, bestTailbackTwo, bestWideoutOne, bestWideoutTwo, bestWideoutThree, bestTightEnd, bestKicker, bestDefense];
-													console.log(bestTeam);
 													bestTotalProjection = totalProjection;
 													var bestCapSpace = capSpace;
 												}
@@ -267,7 +256,6 @@ fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	});
 	fs.readFile('wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
 		allWideouts = preparePlayersArray(wideoutData, wideoutProjectionColumn);
-		console.log(allWideouts);
 		pickTeam();
 	});
 	fs.readFile('tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
