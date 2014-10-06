@@ -30,11 +30,11 @@ var makePlayersArray = function(dataString, projectionColumn) {
 	var playerStrings = dataString.split('\r\n');
 	return playerStrings.map(function(playerString) {
 		var playerArray = playerString.split('\t');
-		if (playerArray[0].charAt(0) === '*') {
-			var playerName = playerArray[0].split('(')[0].trim();
+		var playerName = playerArray[0].split('(')[0].trim();
+		if (playerName.charAt(0) === '*') {
 			return [playerName.split('*')[1], parseFloat(playerArray[projectionColumn - 1])];
 		} else {
-			return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[projectionColumn - 1])];
+			return [playerName, parseFloat(playerArray[projectionColumn - 1])];
 		}
 	});
 };
@@ -106,30 +106,6 @@ var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
 	return newArray;
 }
 
-var checkIfZero = function(index) {
-	if (index === 0) {
-		return 0;
-	} else {
-		return 1;
-	}
-};
-
-var checkIfOne = function(index) {
-	if (index === 1) {
-		return 0;
-	} else {
-		return 1;
-	}
-};
-
-var checkIfTwo = function(index) {
-	if (index === 2) {
-		return 0;
-	} else {
-		return 1;
-	}
-};
-
 var pickTeam = function() {
 	if (filesRead === 7) {
 		var pitchers = prepareEfficientArray(allPitchers);
@@ -139,34 +115,23 @@ var pickTeam = function() {
 		var thirdBasemen = prepareEfficientArray(allThirdBasemen);
 		var shortstops = prepareEfficientArray(allShortstops);
 		var catchers = prepareEfficientArray(allCatchers);
-		// pickBestPossiblePlayers();
 		for (var pitcherIndex = 0; pitcherIndex < pitchers.length; pitcherIndex++) {
-			// console.log('pitcherIndex = ' + pitcherIndex);
 			for (var outfielderOneIndex = 0; outfielderOneIndex < outfielders.length; outfielderOneIndex++) {
-				// console.log('outfielderOneIndex = ' + outfielderOneIndex);
 				var allButOneOutfielder = removeOnePlayer(allOutfielders, outfielders[outfielderOneIndex]);
 				var outfieldersTwo = prepareEfficientArray(allButOneOutfielder);
 				outfieldersTwo = takeTopOffPlayersArray(outfieldersTwo, allOutfielders, outfielders[outfielderOneIndex]);
 				for (var outfielderTwoIndex = 0; outfielderTwoIndex < outfieldersTwo.length; outfielderTwoIndex++) {
-					// console.log('outfielderTwoIndex = ' + outfielderTwoIndex);
 					var allButTwoOutfielders = removeTwoPlayers(allOutfielders, outfielders[outfielderOneIndex], outfieldersTwo[outfielderTwoIndex]);
 					var outfieldersThree = prepareEfficientArray(allButTwoOutfielders);
 					outfieldersThree = takeTopOffPlayersArray(outfieldersThree, allOutfielders, outfielders[outfielderOneIndex]);
 					outfieldersThree = takeTopOffPlayersArray(outfieldersThree, allOutfielders, outfieldersTwo[outfielderTwoIndex]);
 					for (var outfielderThreeIndex = 0; outfielderThreeIndex < outfieldersThree.length; outfielderThreeIndex++) {
-						// console.log('outfielderThreeIndex = ' + outfielderThreeIndex);
 						for (var firstBasemanIndex = 0; firstBasemanIndex < firstBasemen.length; firstBasemanIndex++) {
-							// console.log('firstBasemanIndex = ' + firstBasemanIndex);
 							for (var secondBasemanIndex = 0; secondBasemanIndex < secondBasemen.length; secondBasemanIndex++) {
-								// console.log('secondBasemanIndex = ' + secondBasemanIndex);
 								for (var thirdBasemanIndex = 0; thirdBasemanIndex < thirdBasemen.length; thirdBasemanIndex++) {
-									// console.log('thirdBasemanIndex = ' + thirdBasemanIndex);
 									for (var shortstopIndex = 0; shortstopIndex < shortstops.length; shortstopIndex++) {
-										// console.log('shortstopIndex = ' + shortstopIndex);
 										for (var catcherIndex = 0; catcherIndex < catchers.length; catcherIndex++) {
-											// console.log('catcherIndex = ' + catcherIndex);
 											var pitcher = pitchers[pitcherIndex];
-											// console.log('pitcher = ' + pitcher);
 											var outfielderOne = outfielders[outfielderOneIndex];
 											var outfielderTwo = outfieldersTwo[outfielderTwoIndex];
 											var outfielderThree = outfieldersThree[outfielderThreeIndex];
@@ -177,7 +142,6 @@ var pickTeam = function() {
 											var catcher = catchers[catcherIndex];
 											var capSpace = salaryCap - pitcher[2] - outfielderOne[2] - outfielderTwo[2] - outfielderThree[2] - firstBaseman[2] - secondBaseman[2] - thirdBaseman[2] - shortstop[2] - catcher[2];
 											if (capSpace >= 0) {
-												// console.log('capSpace >= 0');
 												var totalProjection = pitcher[1] + outfielderOne[1] + outfielderTwo[1] + outfielderThree[1] + firstBaseman[1] + secondBaseman[1] + thirdBaseman[1] + shortstop[1] + catcher[1];
 												if (totalProjection > bestTotalProjection) {
 													console.log('totalProjection > bestTotalProjection');
@@ -191,19 +155,18 @@ var pickTeam = function() {
 													var bestShortstop = shortstop;
 													var bestCatcher = catcher;
 													var bestTeam = [bestPitcher, bestCatcher, bestFirstBaseman, bestSecondBaseman, bestThirdBaseman, bestShortstop, bestOutfielderOne, bestOutfielderTwo, bestOutfielderThree];
-													console.log(bestTeam);
 													bestTotalProjection = totalProjection;
 													var bestCapSpace = capSpace;
 												}
-												if (checkIfZero(catcherIndex) === 0) {
-													if (checkIfZero(shortstopIndex) === 0) {
-														if (checkIfZero(thirdBasemanIndex) === 0) {
-															if (checkIfZero(secondBasemanIndex) === 0) {
-																if (checkIfZero(firstBasemanIndex) === 0) {
-																	if (checkIfZero(outfielderThreeIndex) === 0) {
-																		if (checkIfZero(outfielderTwoIndex) === 0) {
-																			if (checkIfZero(outfielderOneIndex) === 0) {
-																				if (checkIfZero(pitcherIndex) === 0) {
+												if (catcherIndex === 0) {
+													if (shortstopIndex === 0) {
+														if (thirdBasemanIndex === 0) {
+															if (secondBasemanIndex === 0) {
+																if (firstBasemanIndex === 0) {
+																	if (outfielderThreeIndex === 0) {
+																		if (outfielderTwoIndex === 0) {
+																			if (outfielderOneIndex === 0) {
+																				if (pitcherIndex === 0) {
 																					console.log(bestTeam);
 																					console.log(bestTotalProjection);
 																					console.log('$' + bestCapSpace);

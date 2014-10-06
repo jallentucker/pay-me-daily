@@ -16,9 +16,6 @@ var lineups = 0;
 
 var makeFanduelArray = function(dataString) {
 	var json = JSON.parse(dataString);
-	// json = _.pick(json, function(value, key) {
-	// 	return _.contains(['29', '13', '1', '14', '16', '30'], value[3]) === true;
-	// });
 	var fanduelArray = _.values(json).map(function(playerArray) {
 		return [playerArray[0], playerArray[1], parseInt(playerArray[5])];
 	});
@@ -130,14 +127,6 @@ var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
 	return newArray;
 }
 
-var checkIfZero = function(index) {
-	if (index === 0) {
-		return 0;
-	} else {
-		return 1;
-	}
-};
-
 var pickTeam = function() {
 	if (filesRead === 6) {
 		var quarterbacks = prepareEfficientArray(allQuarterbacks);
@@ -146,35 +135,25 @@ var pickTeam = function() {
 		var tightEnds = prepareEfficientArray(allTightEnds);
 		var kickers = prepareEfficientArray(allKickers);
 		var defenses = prepareEfficientArray(allDefenses);
-		// pickBestPossiblePlayers();
 		for (var quarterbackIndex = 0; quarterbackIndex < quarterbacks.length; quarterbackIndex++) {
-			// console.log('quarterbackIndex = ' + quarterbackIndex);
 			for (var tailbackOneIndex = 0; tailbackOneIndex < tailbacks.length; tailbackOneIndex++) {
-				// console.log('tailbackOneIndex = ' + tailbackOneIndex);
 				var allButOneTailback = removeOnePlayer(allTailbacks, tailbacks[tailbackOneIndex]);
 				var tailbacksTwo = prepareEfficientArray(allButOneTailback);
 				tailbacksTwo = takeTopOffPlayersArray(tailbacksTwo, allTailbacks, tailbacks[tailbackOneIndex]);
 				for (var tailbackTwoIndex = 0; tailbackTwoIndex < tailbacksTwo.length; tailbackTwoIndex++) {
-					// console.log('tailbackTwoIndex = ' + tailbackTwoIndex);
 					for (var wideoutOneIndex = 0; wideoutOneIndex < wideouts.length; wideoutOneIndex++) {
-						// console.log('wideoutOneIndex = ' + wideoutOneIndex);
 						var allButOneWideout = removeOnePlayer(allWideouts, wideouts[wideoutOneIndex]);
 						var wideoutsTwo = prepareEfficientArray(allButOneWideout);
 						wideoutsTwo = takeTopOffPlayersArray(wideoutsTwo, allWideouts, wideouts[wideoutOneIndex]);
 						for (var wideoutTwoIndex = 0; wideoutTwoIndex < wideoutsTwo.length; wideoutTwoIndex++) {
-							// console.log('wideoutTwoIndex = ' + wideoutTwoIndex);
 							var allButTwoWideouts = removeTwoPlayers(allWideouts, wideouts[wideoutOneIndex], wideoutsTwo[wideoutTwoIndex]);
 							var wideoutsThree = prepareEfficientArray(allButTwoWideouts);
 							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideouts[wideoutOneIndex]);
 							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideoutsTwo[wideoutTwoIndex]);
 							for (var wideoutThreeIndex = 0; wideoutThreeIndex < wideoutsThree.length; wideoutThreeIndex++) {
-								// console.log('wideoutThreeIndex = ' + wideoutThreeIndex);
 								for (var tightEndIndex = 0; tightEndIndex < tightEnds.length; tightEndIndex++) {
-									// console.log('tightEndIndex = ' + tightEndIndex);
 									for (var kickerIndex = 0; kickerIndex < kickers.length; kickerIndex++) {
-										// console.log('kickerIndex = ' + kickerIndex);
 										for (var defenseIndex = 0; defenseIndex < defenses.length; defenseIndex++) {
-											// console.log('defenseIndex = ' + defenseIndex);
 											var quarterback = quarterbacks[quarterbackIndex];
 											var tailbackOne = tailbacks[tailbackOneIndex];
 											var tailbackTwo = tailbacksTwo[tailbackTwoIndex];
@@ -186,7 +165,6 @@ var pickTeam = function() {
 											var defense = defenses[defenseIndex];
 											var capSpace = salaryCap - quarterback[2] - tailbackOne[2] - tailbackTwo[2] - wideoutOne[2] - wideoutTwo[2] - wideoutThree[2] - tightEnd[2] - kicker[2] - defense[2];
 											if (capSpace >= 0) {
-												// console.log('capSpace >= 0');
 												var totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + wideoutTwo[1] + wideoutThree[1] + tightEnd[1] + kicker[1] + defense[1];
 												lineups++;
 												if (totalProjection > bestTotalProjection) {
@@ -231,15 +209,15 @@ var pickTeam = function() {
 													var bestTeam2 = [bestQuarterback2, bestTailbackOne2, bestTailbackTwo2, bestWideoutOne2, bestWideoutTwo2, bestWideoutThree2, bestTightEnd2, bestKicker2, bestDefense2];
 													bestTotalProjection2 = totalProjection;
 													var bestCapSpace2 = capSpace;
-													if (checkIfZero(defenseIndex) === 0) {
-														if (checkIfZero(kickerIndex) === 0) {
-															if (checkIfZero(tightEndIndex) === 0) {
-																if (checkIfZero(wideoutThreeIndex) === 0) {
-																	if (checkIfZero(wideoutTwoIndex) === 0) {
-																		if (checkIfZero(wideoutOneIndex) === 0) {
-																			if (checkIfZero(tailbackTwoIndex) === 0) {
-																				if (checkIfZero(tailbackOneIndex) === 0) {
-																					if (checkIfZero(quarterbackIndex) === 0) {
+													if (defenseIndex === 0) {
+														if (kickerIndex === 0) {
+															if (tightEndIndex === 0) {
+																if (wideoutThreeIndex === 0) {
+																	if (wideoutTwoIndex === 0) {
+																		if (wideoutOneIndex === 0) {
+																			if (tailbackTwoIndex === 0) {
+																				if (tailbackOneIndex === 0) {
+																					if (quarterbackIndex === 0) {
 																						console.log(bestTeam);
 																						console.log(bestTotalProjection);
 																						console.log('$' + bestCapSpace);
