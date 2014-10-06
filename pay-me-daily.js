@@ -259,7 +259,7 @@ var pickTeam = function() {
 	}
 };
 
-fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
+fs.readFile('fanduel-nfl.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
 	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
 		allQuarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
