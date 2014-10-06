@@ -3,8 +3,8 @@ var _ = require('lodash');
 
 var filesRead = 0;
 var projectionColumn = 16;
-var fanduelArray, allQuarterbacks, allTailbacks, allWideouts, allSecondBasemen, allThirdBasemen, allTightEnds, allKickers, allDefenses;
-var salaryCap = 32700;
+var fanduelArray, allPitchers, allOutfielders, allFirstBasemen, allSecondBasemen, allThirdBasemen, allShortstops, allCatchers;
+var salaryCap = 35000;
 var bestTotalProjection = 0;
 
 var makeFanduelArray = function(dataString) {
@@ -97,6 +97,16 @@ var removeOnePlayer = function(playersArray, playerArray) {
 	return newArray;
 };
 
+var removeTwoPlayers = function(playersArray, playerArray1, playerArray2) {
+	var newArray = [];
+	for (var i = 0; i < playersArray.length; i++) {
+		if ((playersArray[i] !== playerArray1) && (playersArray[i] !== playerArray2)) {
+			newArray.push(playersArray[i]);
+		}
+	}
+	return newArray;
+};
+
 var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
 	var newArray = [];
 	var bool = false;
@@ -137,88 +147,100 @@ var checkIfTwo = function(index) {
 
 var pickTeam = function() {
 	if (filesRead === 7) {
-		var quarterbacks = prepareEfficientArray(allQuarterbacks);
-		var tailbacks = prepareEfficientArray(allTailbacks);
-		var wideouts = prepareEfficientArray(allWideouts);
+		var pitchers = prepareEfficientArray(allPitchers);
+		var outfielders = prepareEfficientArray(allOutfielders);
+		var firstBasemen = prepareEfficientArray(allFirstBasemen);
 		var secondBasemen = prepareEfficientArray(allSecondBasemen);
 		var thirdBasemen = prepareEfficientArray(allThirdBasemen);
-		var tightEnds = prepareEfficientArray(allTightEnds);
-		var kickers = prepareEfficientArray(allKickers);
+		var shortstops = prepareEfficientArray(allShortstops);
+		var catchers = prepareEfficientArray(allCatchers);
 		// pickBestPossiblePlayers();
-		for (var quarterbackIndex = 0; quarterbackIndex < quarterbacks.length; quarterbackIndex++) {
-			// console.log('quarterbackIndex = ' + quarterbackIndex);
-			for (var tailbackOneIndex = 0; tailbackOneIndex < tailbacks.length; tailbackOneIndex++) {
-				// console.log('tailbackOneIndex = ' + tailbackOneIndex);
-				var allButOneTailback = removeOnePlayer(allTailbacks, tailbacks[tailbackOneIndex]);
-				var tailbacksTwo = prepareEfficientArray(allButOneTailback);
-				tailbacksTwo = takeTopOffPlayersArray(tailbacksTwo, allTailbacks, tailbacks[tailbackOneIndex]);
-				for (var tailbackTwoIndex = 0; tailbackTwoIndex < tailbacksTwo.length; tailbackTwoIndex++) {
-					// console.log('tailbackTwoIndex = ' + tailbackTwoIndex);
-					for (var wideoutOneIndex = 0; wideoutOneIndex < wideouts.length; wideoutOneIndex++) {
-						// console.log('wideoutOneIndex = ' + wideoutOneIndex);
-						for (var wideoutTwoIndex = 0; wideoutTwoIndex < secondBasemen.length; wideoutTwoIndex++) {
-							// console.log('wideoutTwoIndex = ' + wideoutTwoIndex);
-							for (var wideoutThreeIndex = 0; wideoutThreeIndex < thirdBasemen.length; wideoutThreeIndex++) {
-								// console.log('wideoutThreeIndex = ' + wideoutThreeIndex);
-								for (var tightEndIndex = 0; tightEndIndex < tightEnds.length; tightEndIndex++) {
-									// console.log('tightEndIndex = ' + tightEndIndex);
-									for (var kickerIndex = 0; kickerIndex < kickers.length; kickerIndex++) {
-										// console.log('kickerIndex = ' + kickerIndex);
-										var quarterback = quarterbacks[quarterbackIndex];
-										// console.log('quarterback = ' + quarterback);
-										var tailbackOne = tailbacks[tailbackOneIndex];
-										var tailbackTwo = tailbacksTwo[tailbackTwoIndex];
-										var wideoutOne = wideouts[wideoutOneIndex];
-										var wideoutTwo = secondBasemen[wideoutTwoIndex];
-										var wideoutThree = thirdBasemen[wideoutThreeIndex];
-										var tightEnd = tightEnds[tightEndIndex];
-										var kicker = kickers[kickerIndex];
-										var capSpace = salaryCap - quarterback[2] - tailbackOne[2] - tailbackTwo[2] - wideoutOne[2] - wideoutTwo[2] - wideoutThree[2] - tightEnd[2] - kicker[2];
-										if (capSpace >= 0) {
-											// console.log('capSpace >= 0');
-											// console.log (quarterbackIndex + ' ' + tailbackOneIndex + ' ' + tailbackTwoIndex + ' ' + wideoutOneIndex + ' ' + wideoutTwoIndex + ' ' + wideoutThreeIndex + ' ' + tightEndIndex + ' ' + kickerIndex);
-											var totalProjection = quarterback[1] + tailbackOne[1] + tailbackTwo[1] + wideoutOne[1] + wideoutTwo[1] + wideoutThree[1] + tightEnd[1] + kicker[1];
-											if (totalProjection > bestTotalProjection) {
-												console.log('totalProjection > bestTotalProjection');
-												var bestQuarterback = quarterback;
-												var bestTailbackOne = tailbackOne;
-												var bestTailbackTwo = tailbackTwo;
-												var bestWideoutOne = wideoutOne;
-												var bestWideoutTwo = wideoutTwo;
-												var bestWideoutThree = wideoutThree;
-												var bestTightEnd = tightEnd;
-												var bestKicker = kicker;
-												var bestTeam = [bestQuarterback, bestTailbackOne, bestTailbackTwo, bestWideoutOne, bestWideoutTwo, bestWideoutThree, bestTightEnd, bestKicker];
-												bestTotalProjection = totalProjection;
-												var bestCapSpace = capSpace;
-											}
-											if (checkIfZero(kickerIndex) === 0) {
-												if (checkIfZero(tightEndIndex) === 0) {
-													if (checkIfZero(wideoutThreeIndex) === 0) {
-														if (checkIfZero(wideoutTwoIndex) === 0) {
-															if (checkIfZero(wideoutOneIndex) === 0) {
-																if (checkIfZero(tailbackTwoIndex) === 0) {
-																	if (checkIfZero(tailbackOneIndex) === 0) {
-																		if (checkIfZero(quarterbackIndex) === 0) {
-																			console.log(bestTeam);
-																			console.log(bestTotalProjection);
-																			console.log('$' + bestCapSpace);
-																		}
-																		quarterbackIndex = quarterbacks.length;
-																	}
-																	tailbackOneIndex = tailbacks.length;
-																}
-																tailbackTwoIndex = tailbacksTwo.length;
-															}
-															wideoutOneIndex = wideouts.length;
-														}
-														wideoutTwoIndex = secondBasemen.length;
-													}
-													wideoutThreeIndex = thirdBasemen.length;
+		for (var pitcherIndex = 0; pitcherIndex < pitchers.length; pitcherIndex++) {
+			// console.log('pitcherIndex = ' + pitcherIndex);
+			for (var outfielderOneIndex = 0; outfielderOneIndex < outfielders.length; outfielderOneIndex++) {
+				// console.log('outfielderOneIndex = ' + outfielderOneIndex);
+				var allButOneOutfielder = removeOnePlayer(allOutfielders, outfielders[outfielderOneIndex]);
+				var outfieldersTwo = prepareEfficientArray(allButOneOutfielder);
+				outfieldersTwo = takeTopOffPlayersArray(outfieldersTwo, allOutfielders, outfielders[outfielderOneIndex]);
+				for (var outfielderTwoIndex = 0; outfielderTwoIndex < outfieldersTwo.length; outfielderTwoIndex++) {
+					// console.log('outfielderTwoIndex = ' + outfielderTwoIndex);
+					var allButTwoOutfielders = removeTwoPlayers(allOutfielders, outfielders[outfielderOneIndex], outfieldersTwo[outfielderTwoIndex]);
+					var outfieldersThree = prepareEfficientArray(allButTwoOutfielders);
+					outfieldersThree = takeTopOffPlayersArray(outfieldersThree, allOutfielders, outfielders[outfielderOneIndex]);
+					outfieldersThree = takeTopOffPlayersArray(outfieldersThree, allOutfielders, outfieldersTwo[outfielderTwoIndex]);
+					for (var outfielderThreeIndex = 0; outfielderThreeIndex < outfieldersThree.length; outfielderThreeIndex++) {
+						// console.log('outfielderThreeIndex = ' + outfielderThreeIndex);
+						for (var firstBasemanIndex = 0; firstBasemanIndex < firstBasemen.length; firstBasemanIndex++) {
+							// console.log('firstBasemanIndex = ' + firstBasemanIndex);
+							for (var secondBasemanIndex = 0; secondBasemanIndex < secondBasemen.length; secondBasemanIndex++) {
+								// console.log('secondBasemanIndex = ' + secondBasemanIndex);
+								for (var thirdBasemanIndex = 0; thirdBasemanIndex < thirdBasemen.length; thirdBasemanIndex++) {
+									// console.log('thirdBasemanIndex = ' + thirdBasemanIndex);
+									for (var shortstopIndex = 0; shortstopIndex < shortstops.length; shortstopIndex++) {
+										// console.log('shortstopIndex = ' + shortstopIndex);
+										for (var catcherIndex = 0; catcherIndex < catchers.length; catcherIndex++) {
+											// console.log('catcherIndex = ' + catcherIndex);
+											var pitcher = pitchers[pitcherIndex];
+											// console.log('pitcher = ' + pitcher);
+											var outfielderOne = outfielders[outfielderOneIndex];
+											var outfielderTwo = outfieldersTwo[outfielderTwoIndex];
+											var outfielderThree = outfieldersThree[outfielderThreeIndex];
+											var firstBaseman = firstBasemen[firstBasemanIndex];
+											var secondBaseman = secondBasemen[secondBasemanIndex];
+											var thirdBaseman = thirdBasemen[thirdBasemanIndex];
+											var shortstop = shortstops[shortstopIndex];
+											var catcher = catchers[catcherIndex];
+											var capSpace = salaryCap - pitcher[2] - outfielderOne[2] - outfielderTwo[2] - outfielderThree[2] - firstBaseman[2] - secondBaseman[2] - thirdBaseman[2] - shortstop[2] - catcher[2];
+											if (capSpace >= 0) {
+												// console.log('capSpace >= 0');
+												var totalProjection = pitcher[1] + outfielderOne[1] + outfielderTwo[1] + outfielderThree[1] + firstBaseman[1] + secondBaseman[1] + thirdBaseman[1] + shortstop[1] + catcher[1];
+												if (totalProjection > bestTotalProjection) {
+													console.log('totalProjection > bestTotalProjection');
+													var bestPitcher = pitcher;
+													var bestOutfielderOne = outfielderOne;
+													var bestOutfielderTwo = outfielderTwo;
+													var bestOutfielderThree = outfielderThree;
+													var bestFirstBaseman = firstBaseman;
+													var bestSecondBaseman = secondBaseman;
+													var bestThirdBaseman = thirdBaseman;
+													var bestShortstop = shortstop;
+													var bestCatcher = catcher;
+													var bestTeam = [bestPitcher, bestCatcher, bestFirstBaseman, bestSecondBaseman, bestThirdBaseman, bestShortstop, bestOutfielderOne, bestOutfielderTwo, bestOutfielderThree];
+													console.log(bestTeam);
+													bestTotalProjection = totalProjection;
+													var bestCapSpace = capSpace;
 												}
-												tightEndIndex = tightEnds.length;
+												if (checkIfZero(catcherIndex) === 0) {
+													if (checkIfZero(shortstopIndex) === 0) {
+														if (checkIfZero(thirdBasemanIndex) === 0) {
+															if (checkIfZero(secondBasemanIndex) === 0) {
+																if (checkIfZero(firstBasemanIndex) === 0) {
+																	if (checkIfZero(outfielderThreeIndex) === 0) {
+																		if (checkIfZero(outfielderTwoIndex) === 0) {
+																			if (checkIfZero(outfielderOneIndex) === 0) {
+																				if (checkIfZero(pitcherIndex) === 0) {
+																					console.log(bestTeam);
+																					console.log(bestTotalProjection);
+																					console.log('$' + bestCapSpace);
+																				}
+																				pitcherIndex = pitchers.length;
+																			}
+																			outfielderOneIndex = outfielders.length;
+																		}
+																		outfielderTwoIndex = outfieldersTwo.length;
+																	}
+																	outfielderThreeIndex = outfieldersThree.length;
+																}
+																firstBasemanIndex = firstBasemen.length;
+															}
+															secondBasemanIndex = secondBasemen.length;
+														}
+														thirdBasemanIndex = thirdBasemen.length;
+													}
+													shortstopIndex = shortstops.length;
+												}
+												catcherIndex = catchers.length;
 											}
-											kickerIndex = kickers.length;
 										}
 									}
 								}
@@ -236,16 +258,16 @@ var pickTeam = function() {
 
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
-	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
-		allQuarterbacks = preparePitchersArray(quarterbackData, projectionColumn);
+	fs.readFile('ps.txt', { encoding: 'utf8' }, function(err, pitcherData) {
+		allPitchers = preparePitchersArray(pitcherData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('rbs.txt', { encoding: 'utf8' }, function(err, tailbackData) {
-		allTailbacks = preparePlayersArray(tailbackData, projectionColumn);
+	fs.readFile('ofs.txt', { encoding: 'utf8' }, function(err, outfielderData) {
+		allOutfielders = preparePlayersArray(outfielderData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
-		allWideouts = preparePlayersArray(wideoutData, projectionColumn);
+	fs.readFile('1bs.txt', { encoding: 'utf8' }, function(err, firstBasemanData) {
+		allFirstBasemen = preparePlayersArray(firstBasemanData, projectionColumn);
 		pickTeam();
 	});
 	fs.readFile('2bs.txt', { encoding: 'utf8' }, function(err, secondBasemanData) {
@@ -256,12 +278,12 @@ fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 		allThirdBasemen = preparePlayersArray(thirdBasemanData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
-		allTightEnds = preparePlayersArray(tightEndData, projectionColumn);
+	fs.readFile('sss.txt', { encoding: 'utf8' }, function(err, shortstopData) {
+		allShortstops = preparePlayersArray(shortstopData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('ks.txt', { encoding: 'utf8' }, function(err, kickerData) {
-		allKickers = preparePlayersArray(kickerData, projectionColumn);
+	fs.readFile('cs.txt', { encoding: 'utf8' }, function(err, catcherData) {
+		allCatchers = preparePlayersArray(catcherData, projectionColumn);
 		pickTeam();
 	});
 });
