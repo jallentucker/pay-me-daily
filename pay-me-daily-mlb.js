@@ -15,16 +15,6 @@ var makeFanduelArray = function(dataString) {
 	return fanduelArray;
 };
 
-var preparePitchersArray = function(dataString, projectionColumn) {
-	var playersArray = makePitchersArray(dataString, projectionColumn);
-	playersArray = addSalaries(playersArray);
-	playersArray.sort(function(a, b) {
-		return b[1] - a[1];
-	});
-	playersArray = trimPlayersArray(playersArray);
-	return playersArray;
-};
-
 var preparePlayersArray = function(dataString, projectionColumn) {
 	var playersArray = makePlayersArray(dataString, projectionColumn);
 	playersArray = addSalaries(playersArray);
@@ -35,22 +25,17 @@ var preparePlayersArray = function(dataString, projectionColumn) {
 	return playersArray;
 };
 
-var makePitchersArray = function(dataString, projectionColumn) {
-	filesRead++;
-	var playerStrings = dataString.split('\r\n');
-	return playerStrings.map(function(playerString) {
-		var playerArray = playerString.split('\t');
-		return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[projectionColumn - 1])];
-	});
-};
-
 var makePlayersArray = function(dataString, projectionColumn) {
 	filesRead++;
 	var playerStrings = dataString.split('\r\n');
 	return playerStrings.map(function(playerString) {
 		var playerArray = playerString.split('\t');
-		var playerName = playerArray[0].split('(')[0].trim();
-		return [playerName.split('*')[1], parseFloat(playerArray[projectionColumn - 1])];
+		if (playerArray[0].charAt(0) === '*') {
+			var playerName = playerArray[0].split('(')[0].trim();
+			return [playerName.split('*')[1], parseFloat(playerArray[projectionColumn - 1])];
+		} else {
+			return [playerArray[0].split('(')[0].trim(), parseFloat(playerArray[projectionColumn - 1])];
+		}
 	});
 };
 
@@ -259,7 +244,7 @@ var pickTeam = function() {
 fs.readFile('fanduel.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
 	fs.readFile('ps.txt', { encoding: 'utf8' }, function(err, pitcherData) {
-		allPitchers = preparePitchersArray(pitcherData, projectionColumn);
+		allPitchers = preparePlayersArray(pitcherData, projectionColumn);
 		pickTeam();
 	});
 	fs.readFile('ofs.txt', { encoding: 'utf8' }, function(err, outfielderData) {
