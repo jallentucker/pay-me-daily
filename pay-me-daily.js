@@ -261,27 +261,27 @@ var pickTeam = function() {
 
 fs.readFile('fanduel-nfl.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
-	fs.readFile('qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
+	fs.readFile('projections/nfl/qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
 		allQuarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
 		pickTeam();
 	});
-	fs.readFile('rbs.txt', { encoding: 'utf8' }, function(err, tailbackData) {
+	fs.readFile('projections/nfl/rbs.txt', { encoding: 'utf8' }, function(err, tailbackData) {
 		allTailbacks = preparePlayersArray(tailbackData, tailbackProjectionColumn);
 		pickTeam();
 	});
-	fs.readFile('wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
+	fs.readFile('projections/nfl/wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
 		allWideouts = preparePlayersArray(wideoutData, wideoutProjectionColumn);
 		pickTeam();
 	});
-	fs.readFile('tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
+	fs.readFile('projections/nfl/tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
 		allTightEnds = preparePlayersArray(tightEndData, tightEndProjectionColumn);
 		pickTeam();
 	});
-	fs.readFile('ks.txt', { encoding: 'utf8' }, function(err, kickerData) {
+	fs.readFile('projections/nfl/ks.txt', { encoding: 'utf8' }, function(err, kickerData) {
 		allKickers = preparePlayersArray(kickerData, kickerProjectionColumn);
 		pickTeam();
 	});
-	fs.readFile('ds.txt', { encoding: 'utf8' }, function(err, defenseData) {
+	fs.readFile('projections/nfl/ds.txt', { encoding: 'utf8' }, function(err, defenseData) {
 		allDefenses = preparePlayersArray(defenseData, defenseProjectionColumn);
 		pickTeam();
 	});

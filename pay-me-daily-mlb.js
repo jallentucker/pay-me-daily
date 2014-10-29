@@ -240,31 +240,31 @@ var pickTeam = function() {
 
 fs.readFile('fanduel-mlb.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
-	fs.readFile('ps.txt', { encoding: 'utf8' }, function(err, pitcherData) {
+	fs.readFile('projections/mlb/ps.txt', { encoding: 'utf8' }, function(err, pitcherData) {
 		allPitchers = preparePlayersArray(pitcherData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('ofs.txt', { encoding: 'utf8' }, function(err, outfielderData) {
+	fs.readFile('projections/mlb/ofs.txt', { encoding: 'utf8' }, function(err, outfielderData) {
 		allOutfielders = preparePlayersArray(outfielderData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('1bs.txt', { encoding: 'utf8' }, function(err, firstBasemanData) {
+	fs.readFile('projections/mlb/1bs.txt', { encoding: 'utf8' }, function(err, firstBasemanData) {
 		allFirstBasemen = preparePlayersArray(firstBasemanData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('2bs.txt', { encoding: 'utf8' }, function(err, secondBasemanData) {
+	fs.readFile('projections/mlb/2bs.txt', { encoding: 'utf8' }, function(err, secondBasemanData) {
 		allSecondBasemen = preparePlayersArray(secondBasemanData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('3bs.txt', { encoding: 'utf8' }, function(err, thirdBasemanData) {
+	fs.readFile('projections/mlb/3bs.txt', { encoding: 'utf8' }, function(err, thirdBasemanData) {
 		allThirdBasemen = preparePlayersArray(thirdBasemanData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('sss.txt', { encoding: 'utf8' }, function(err, shortstopData) {
+	fs.readFile('projections/mlb/sss.txt', { encoding: 'utf8' }, function(err, shortstopData) {
 		allShortstops = preparePlayersArray(shortstopData, projectionColumn);
 		pickTeam();
 	});
-	fs.readFile('cs.txt', { encoding: 'utf8' }, function(err, catcherData) {
+	fs.readFile('projections/mlb/cs.txt', { encoding: 'utf8' }, function(err, catcherData) {
 		allCatchers = preparePlayersArray(catcherData, projectionColumn);
 		pickTeam();
 	});
