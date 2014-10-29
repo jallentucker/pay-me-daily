@@ -6,6 +6,8 @@ var projectionColumn = 16;
 var fanduelArray, allPitchers, allOutfielders, allFirstBasemen, allSecondBasemen, allThirdBasemen, allShortstops, allCatchers;
 var salaryCap = 35000;
 var bestTotalProjection = 0;
+var bestTotalProjection2 = 0;
+var lineups = 0;
 
 var makeFanduelArray = function(dataString) {
 	var json = JSON.parse(dataString);
@@ -143,8 +145,23 @@ var pickTeam = function() {
 											var capSpace = salaryCap - pitcher[2] - outfielderOne[2] - outfielderTwo[2] - outfielderThree[2] - firstBaseman[2] - secondBaseman[2] - thirdBaseman[2] - shortstop[2] - catcher[2];
 											if (capSpace >= 0) {
 												var totalProjection = pitcher[1] + outfielderOne[1] + outfielderTwo[1] + outfielderThree[1] + firstBaseman[1] + secondBaseman[1] + thirdBaseman[1] + shortstop[1] + catcher[1];
+												lineups++;
 												if (totalProjection > bestTotalProjection) {
 													console.log('totalProjection > bestTotalProjection');
+													if (lineups > 1) {
+														var bestPitcher2 = bestPitcher;
+														var bestOutfielderOne2 = bestOutfielderOne;
+														var bestOutfielderTwo2 = bestOutfielderTwo;
+														var bestOutfielderThree2 = bestOutfielderThree;
+														var bestFirstBaseman2 = bestFirstBaseman;
+														var bestSecondBaseman2 = bestSecondBaseman;
+														var bestThirdBaseman2 = bestThirdBaseman;
+														var bestShortstop2 = bestShortstop;
+														var bestCatcher2 = bestCatcher;
+														var bestTeam2 = [bestPitcher2, bestCatcher2, bestFirstBaseman2, bestSecondBaseman2, bestThirdBaseman2, bestShortstop2, bestOutfielderOne2, bestOutfielderTwo2, bestOutfielderThree2];
+														bestTotalProjection2 = bestTotalProjection;
+														var bestCapSpace2 = bestCapSpace;
+													}
 													var bestPitcher = pitcher;
 													var bestOutfielderOne = outfielderOne;
 													var bestOutfielderTwo = outfielderTwo;
@@ -157,37 +174,51 @@ var pickTeam = function() {
 													var bestTeam = [bestPitcher, bestCatcher, bestFirstBaseman, bestSecondBaseman, bestThirdBaseman, bestShortstop, bestOutfielderOne, bestOutfielderTwo, bestOutfielderThree];
 													bestTotalProjection = totalProjection;
 													var bestCapSpace = capSpace;
-												}
-												if (catcherIndex === 0) {
-													if (shortstopIndex === 0) {
-														if (thirdBasemanIndex === 0) {
-															if (secondBasemanIndex === 0) {
-																if (firstBasemanIndex === 0) {
-																	if (outfielderThreeIndex === 0) {
-																		if (outfielderTwoIndex === 0) {
-																			if (outfielderOneIndex === 0) {
-																				if (pitcherIndex === 0) {
-																					console.log(bestTeam);
-																					console.log(bestTotalProjection);
-																					console.log('$' + bestCapSpace);
+												} else if (totalProjection > bestTotalProjection2) {
+													console.log('totalProjection > bestTotalProjection2');
+													var bestPitcher2 = pitcher;
+													var bestOutfielderOne2 = outfielderOne;
+													var bestOutfielderTwo2 = outfielderTwo;
+													var bestOutfielderThree2 = outfielderThree;
+													var bestFirstBaseman2 = firstBaseman;
+													var bestSecondBaseman2 = secondBaseman;
+													var bestThirdBaseman2 = thirdBaseman;
+													var bestShortstop2 = shortstop;
+													var bestCatcher2 = catcher;
+													var bestTeam2 = [bestPitcher2, bestCatcher2, bestFirstBaseman2, bestSecondBaseman2, bestThirdBaseman2, bestShortstop2, bestOutfielderOne2, bestOutfielderTwo2, bestOutfielderThree2];
+													bestTotalProjection2 = totalProjection;
+													var bestCapSpace2 = capSpace;
+													if (catcherIndex === 0) {
+														if (shortstopIndex === 0) {
+															if (thirdBasemanIndex === 0) {
+																if (secondBasemanIndex === 0) {
+																	if (firstBasemanIndex === 0) {
+																		if (outfielderThreeIndex === 0) {
+																			if (outfielderTwoIndex === 0) {
+																				if (outfielderOneIndex === 0) {
+																					if (pitcherIndex === 0) {
+																						console.log(bestTeam);
+																						console.log(bestTotalProjection);
+																						console.log('$' + bestCapSpace);
+																					}
+																					pitcherIndex = pitchers.length;
 																				}
-																				pitcherIndex = pitchers.length;
+																				outfielderOneIndex = outfielders.length;
 																			}
-																			outfielderOneIndex = outfielders.length;
+																			outfielderTwoIndex = outfieldersTwo.length;
 																		}
-																		outfielderTwoIndex = outfieldersTwo.length;
+																		outfielderThreeIndex = outfieldersThree.length;
 																	}
-																	outfielderThreeIndex = outfieldersThree.length;
+																	firstBasemanIndex = firstBasemen.length;
 																}
-																firstBasemanIndex = firstBasemen.length;
+																secondBasemanIndex = secondBasemen.length;
 															}
-															secondBasemanIndex = secondBasemen.length;
+															thirdBasemanIndex = thirdBasemen.length;
 														}
-														thirdBasemanIndex = thirdBasemen.length;
+														shortstopIndex = shortstops.length;
 													}
-													shortstopIndex = shortstops.length;
+													catcherIndex = catchers.length;
 												}
-												catcherIndex = catchers.length;
 											}
 										}
 									}
@@ -201,6 +232,9 @@ var pickTeam = function() {
 		console.log(bestTeam);
 		console.log(bestTotalProjection);
 		console.log('$' + bestCapSpace);
+		console.log(bestTeam2);
+		console.log(bestTotalProjection2);
+		console.log('$' + bestCapSpace2);
 	}
 };
 
