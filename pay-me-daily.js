@@ -14,6 +14,10 @@ var bestTotalProjection = 0;
 var bestTotalProjection2 = 0;
 var lineups = 0;
 
+// makeFanduelArray takes as its argument the contents of a .txt file scrubbed from FanDuel.com and
+// returns an array. The array includes elements representing each player available to the user when
+// playing the relevant FanDuel.com game. Each element is itself an array, consisting of the player's
+// position, name, and salary on FanDuel.com.
 var makeFanduelArray = function(dataString) {
 	var json = JSON.parse(dataString);
 	var fanduelArray = _.values(json).map(function(playerArray) {
@@ -22,13 +26,20 @@ var makeFanduelArray = function(dataString) {
 	return fanduelArray;
 };
 
+// preparePlayersArray takes as its two arguments 1) the contents of a .txt file scrubbed from numberFire.com
+// and 2) the "column" of the dataset that contains the fantasy projection for each player. preparePlayersArray
+// returns an array that includes elements representing each player that both has a projection from
+// numberFire.com and is available in the relevant FanDuel.com game. Each element is itself an array,
+// consisting of the player's name, fantasy projection for this week, and salary on FanDuel.com.
 var preparePlayersArray = function(dataString, projectionColumn) {
 	var playersArray = makePlayersArray(dataString, projectionColumn);
+	// Only in the team defense file are fantasy projections found in the twelfth column.
 	if (projectionColumn === 12) {
 		playersArray = addDefenseSalaries(playersArray);
 	} else {
 		playersArray = addSalaries(playersArray);
 	}
+	// Player arrays are sorted by fantasy projection descending.
 	playersArray.sort(function(a, b) {
 		return b[1] - a[1];
 	});
@@ -36,7 +47,14 @@ var preparePlayersArray = function(dataString, projectionColumn) {
 	return playersArray;
 };
 
+// makePlayersArray takes as its two arguments 1) the contents of a .txt file scrubbed from numberFire.com
+// and 2) the "column" of the dataset that contains the fantasy projection for each player. makePlayersArray
+// returns an array that includes elements representing each player that has a projection from numberFire.com.
+// Each element is itself an array, consisting of the player's name and fantasy projection for this
+// week.
 var makePlayersArray = function(dataString, projectionColumn) {
+	// fliesRead is incremented each time this function is called so that the pickTeam function will
+	// not fire until all six positional .txt files have been processed.
 	filesRead++;
 	var playerStrings = dataString.split('\r\n');
 	return playerStrings.map(function(playerString) {
@@ -45,6 +63,9 @@ var makePlayersArray = function(dataString, projectionColumn) {
 	});
 };
 
+// addSalaries takes an array of players who are each represented by an array consisting of the player's
+// name and fantasy projection for this week. addSalaries returns an array of players who are each represented
+// by an array consisting of the player's name, fantasy projection for this week, and salary on FanDuel.com.
 var addSalaries = function(playersArray) {
 	return playersArray.map(function(playerArray) {
 		for (var i = 0; i < fanduelArray.length; i++) {
@@ -58,6 +79,8 @@ var addSalaries = function(playersArray) {
 	});
 };
 
+// addDefenseSalaries performs the same function as addSalaries, except it specifically applies to team
+// defenses rather than individual skill players.
 var addDefenseSalaries = function(playersArray) {
 	return playersArray.map(function(playerArray) {
 		for (var i = 0; i < fanduelArray.length; i++) {
@@ -73,6 +96,11 @@ var addDefenseSalaries = function(playersArray) {
 	});
 };
 
+// trimPlayersArray takes an array of players who are each represented by an array consisting of the
+// player's name, fantasy projection for this week, and (unless the player is not eligible in the relevant
+// FanDuel.com game) salary on FanDuel.com. trimPlayersArray returns the same array it received as an
+// argument minus the arrays representing any players who did not have a salary and thus are not eligible
+// in the relevant FanDuel.com game.
 var trimPlayersArray = function(playersArray) {
 	var trimmedPlayersArray = [];
 	playersArray.forEach(function(playerArray) {
@@ -83,6 +111,11 @@ var trimPlayersArray = function(playersArray) {
 	return trimmedPlayersArray;
 };
 
+// prepareEfficientArray takes an array of players at a particular position who are each represented
+// by an array consisting of the player's name, fantasy projection for this week, and salary on FanDuel.com.
+// prepareEfficientArray returns a new version of the same array that is missing certain players who
+// could not possibly be of interest to the algorithm because there is at least one other player with
+// BOTH a lower salary and a higher projection.
 var prepareEfficientArray = function(playersArray) {
 	var newArray = [playersArray[0]];
 	for (var i = 1; i < playersArray.length; i++) {
@@ -93,6 +126,9 @@ var prepareEfficientArray = function(playersArray) {
 	return newArray;
 };
 
+// removeOnePlayer takes two arguments. The first is an efficient array of players at a particular position.
+// The second is a specific player represented by an array. removeOnePlayer returns a copy of the first
+// argument with one difference: the second argument is not one of the elements of the copy.
 var removeOnePlayer = function(playersArray, playerArray) {
 	var newArray = [];
 	for (var i = 0; i < playersArray.length; i++) {
@@ -127,8 +163,12 @@ var takeTopOffPlayersArray = function(playersArray, fullArray, playerArray) {
 	return newArray;
 }
 
+// pickTeam is a function that takes no arguments. Once all .txt files have been read and their data
+// placed into arrays, the pickTeam function uses an algorithm to find optimized fantasy lineups based
+// on fantasy projections from numberFire.com and salaries from FanDuel.com.
 var pickTeam = function() {
 	if (filesRead === 6) {
+		// Efficient arrays are prepared for all positions.
 		var quarterbacks = prepareEfficientArray(allQuarterbacks);
 		var tailbacks = prepareEfficientArray(allTailbacks);
 		var wideouts = prepareEfficientArray(allWideouts);
@@ -259,28 +299,41 @@ var pickTeam = function() {
 	}
 };
 
+// fanduel-nfl.txt contains player salary data scrubbed from FanDuel.com.
 fs.readFile('fanduel-nfl.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
+	// projections/nfl/qbs.txt contains fantasy projections for most if not all quarterbacks playing
+	// in a given week.
 	fs.readFile('projections/nfl/qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
 		allQuarterbacks = preparePlayersArray(quarterbackData, quarterbackProjectionColumn);
 		pickTeam();
 	});
+	// projections/nfl/rbs.txt contains fantasy projections for most if not all running backs playing
+	// in a given week.
 	fs.readFile('projections/nfl/rbs.txt', { encoding: 'utf8' }, function(err, tailbackData) {
 		allTailbacks = preparePlayersArray(tailbackData, tailbackProjectionColumn);
 		pickTeam();
 	});
+	// projections/nfl/wrs.txt contains fantasy projections for most if not all wide receivers playing
+	// in a given week.
 	fs.readFile('projections/nfl/wrs.txt', { encoding: 'utf8' }, function(err, wideoutData) {
 		allWideouts = preparePlayersArray(wideoutData, wideoutProjectionColumn);
 		pickTeam();
 	});
+	// projections/nfl/tes.txt contains fantasy projections for most if not all tight ends playing in
+	// a given week.
 	fs.readFile('projections/nfl/tes.txt', { encoding: 'utf8' }, function(err, tightEndData) {
 		allTightEnds = preparePlayersArray(tightEndData, tightEndProjectionColumn);
 		pickTeam();
 	});
+	// projections/nfl/ks.txt contains fantasy projections for most if not all kickers playing in a
+	// given week.
 	fs.readFile('projections/nfl/ks.txt', { encoding: 'utf8' }, function(err, kickerData) {
 		allKickers = preparePlayersArray(kickerData, kickerProjectionColumn);
 		pickTeam();
 	});
+	// projections/nfl/ds.txt contains fantasy projections for most if not all team defenses playing
+	// in a given week.
 	fs.readFile('projections/nfl/ds.txt', { encoding: 'utf8' }, function(err, defenseData) {
 		allDefenses = preparePlayersArray(defenseData, defenseProjectionColumn);
 		pickTeam();
