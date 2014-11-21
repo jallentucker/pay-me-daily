@@ -139,6 +139,8 @@ var removeOnePlayer = function(playersArray, playerArray) {
 	return newArray;
 };
 
+// removeTwoPlayers is analogous to the removeOnePlayer function. removeTwoPlayers takes a third argument
+// representing a second specific player who should not be included in the array returned by removeTwoPlayers.
 var removeTwoPlayers = function(playersArray, playerArray1, playerArray2) {
 	var newArray = [];
 	for (var i = 0; i < playersArray.length; i++) {
@@ -175,21 +177,42 @@ var pickTeam = function() {
 		var tightEnds = prepareEfficientArray(allTightEnds);
 		var kickers = prepareEfficientArray(allKickers);
 		var defenses = prepareEfficientArray(allDefenses);
+		// The following for loop increments through quarterbacks until the two best possible lineups
+		// have been identified.
 		for (var quarterbackIndex = 0; quarterbackIndex < quarterbacks.length; quarterbackIndex++) {
+			// Two tailbacks must be chosen to fill out a FanDuel lineup. The following for loop increments
+			// through tailbacks while searching for optimal lineups.
 			for (var tailbackOneIndex = 0; tailbackOneIndex < tailbacks.length; tailbackOneIndex++) {
+				// The following three lines of code create a new efficient array of tailbacks (tailbacksTwo),
+				// based on which tailback has already been chosen as tailbackOne, from which to choose
+				// a second tailback.
 				var allButOneTailback = removeOnePlayer(allTailbacks, tailbacks[tailbackOneIndex]);
 				var tailbacksTwo = prepareEfficientArray(allButOneTailback);
 				tailbacksTwo = takeTopOffPlayersArray(tailbacksTwo, allTailbacks, tailbacks[tailbackOneIndex]);
+				// The following for loop increments through tailbacksTwo while searching for optimal
+				// lineups.
 				for (var tailbackTwoIndex = 0; tailbackTwoIndex < tailbacksTwo.length; tailbackTwoIndex++) {
+					// Three wideouts muct be chosen to fill out a FanDuel lineup. The following for
+					// loop increments through wideouts while searching for optimal lineups.
 					for (var wideoutOneIndex = 0; wideoutOneIndex < wideouts.length; wideoutOneIndex++) {
+						// The following three lines of code create a new efficient array of wideouts
+						// (wideoutsTwo), based on which wideout has already been chosen as wideoutOne,
+						// from which to choose a second wideout.
 						var allButOneWideout = removeOnePlayer(allWideouts, wideouts[wideoutOneIndex]);
 						var wideoutsTwo = prepareEfficientArray(allButOneWideout);
 						wideoutsTwo = takeTopOffPlayersArray(wideoutsTwo, allWideouts, wideouts[wideoutOneIndex]);
+						// The following for loop increments through wideoutsTwo while searching for
+						// optimal lineups.
 						for (var wideoutTwoIndex = 0; wideoutTwoIndex < wideoutsTwo.length; wideoutTwoIndex++) {
+							// The following four lines of code create a new efficient array of wideouts
+							// (wideoutsThree), based on which wideouts have already been chosen as
+							// wideoutOne and wideoutTwo, from which to choose a third wideout.
 							var allButTwoWideouts = removeTwoPlayers(allWideouts, wideouts[wideoutOneIndex], wideoutsTwo[wideoutTwoIndex]);
 							var wideoutsThree = prepareEfficientArray(allButTwoWideouts);
 							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideouts[wideoutOneIndex]);
 							wideoutsThree = takeTopOffPlayersArray(wideoutsThree, allWideouts, wideoutsTwo[wideoutTwoIndex]);
+							// The following for loop increments through wideoutsThree while searching
+							// for optimal lineups.
 							for (var wideoutThreeIndex = 0; wideoutThreeIndex < wideoutsThree.length; wideoutThreeIndex++) {
 								for (var tightEndIndex = 0; tightEndIndex < tightEnds.length; tightEndIndex++) {
 									for (var kickerIndex = 0; kickerIndex < kickers.length; kickerIndex++) {
