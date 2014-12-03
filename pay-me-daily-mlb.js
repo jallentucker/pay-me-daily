@@ -238,7 +238,7 @@ var pickTeam = function() {
 	}
 };
 
-fs.readFile('fanduel-mlb.txt', { encoding: 'utf8' }, function(err, fanduelData) {
+fs.readFile('player_lists/mlb.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
 	fs.readFile('projections/mlb/ps.txt', { encoding: 'utf8' }, function(err, pitcherData) {
 		allPitchers = preparePlayersArray(pitcherData, projectionColumn);

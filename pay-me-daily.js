@@ -323,7 +323,7 @@ var pickTeam = function() {
 };
 
 // fanduel-nfl.txt contains player salary data scrubbed from FanDuel.com.
-fs.readFile('fanduel-nfl.txt', { encoding: 'utf8' }, function(err, fanduelData) {
+fs.readFile('player_lists/nfl.txt', { encoding: 'utf8' }, function(err, fanduelData) {
 	fanduelArray = makeFanduelArray(fanduelData);
 	// projections/nfl/qbs.txt contains fantasy projections for most if not all quarterbacks playing
 	// in a given week.
