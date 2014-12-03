@@ -1,0 +1,13 @@
+{
+	"name": "pay-me-daily",
+	"version": "0.0.1",
+	"description": "",
+	"author": {
+		"name": "Joshua Tucker",
+		"email": "j.allentucker@gmail.com",
+		"url": "http://www.joshuatuckerpdx.com"
+	},
+	"dependencies": {
+		"lodash": "*"
+	}
+}
