@@ -126,13 +126,21 @@ var prepareEfficientArray = module.exports.prepareEfficientArray = function(play
 	return newArray;
 };
 
-// removeOnePlayer takes two arguments. The first is an efficient array of players at a particular position.
+// removeOnePlayer takes two arguments. The first is an inefficient array of players at a particular position.
 // The second is a specific player represented by an array. removeOnePlayer returns a copy of the first
 // argument with one difference: the second argument is not one of the elements of the copy.
-var removeOnePlayer = function(playersArray, playerArray) {
+var removeOnePlayer = module.exports.removeOnePlayer = function(playersArray, playerArray) {
 	var newArray = [];
 	for (var i = 0; i < playersArray.length; i++) {
-		if (playersArray[i] !== playerArray) {
+		var equalities = 0;
+		for (var j = 0; j < playersArray[i].length; j++) {
+			if (playersArray[i][j] === playerArray[j]) {
+				equalities++;
+			} else {
+				j = playersArray[i].length;
+			}
+		}
+		if (equalities < playersArray[i].length) {
 			newArray.push(playersArray[i]);
 		}
 	}
