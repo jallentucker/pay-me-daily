@@ -116,7 +116,7 @@ var trimPlayersArray = function(playersArray) {
 // prepareEfficientArray returns a new version of the same array that is missing certain players who
 // could not possibly be of interest to the algorithm because there is at least one other player with
 // BOTH a lower salary and a higher projection.
-var prepareEfficientArray = function(playersArray) {
+var prepareEfficientArray = module.exports.prepareEfficientArray = function(playersArray) {
 	var newArray = [playersArray[0]];
 	for (var i = 1; i < playersArray.length; i++) {
 		if (playersArray[i][2] < newArray[newArray.length - 1][2]) {

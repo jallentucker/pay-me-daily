@@ -9,5 +9,12 @@
 	},
 	"dependencies": {
 		"lodash": "*"
+	},
+	"devDependencies": {
+		"chai": "*",
+		"mocha": "*"
+	},
+	"scripts": {
+		"test": "mocha"
 	}
 }
