@@ -52,10 +52,10 @@ var preparePlayersArray = function(dataString, projectionColumn) {
 // returns an array that includes elements representing each player that has a projection from numberFire.com.
 // Each element is itself an array, consisting of the player's name and fantasy projection for this
 // week.
-var makePlayersArray = function(dataString, projectionColumn) {
+var makePlayersArray = module.exports.makePlayersArray = function(dataString, projectionColumn) {
 	// fliesRead is incremented each time this function is called so that the pickTeam function will
 	// not fire until all six positional .txt files have been processed.
-	filesRead++;
+	// filesRead++;
 	var playerStrings = dataString.split('\r\n');
 	return playerStrings.map(function(playerString) {
 		var playerArray = playerString.split('\t');

@@ -1,3 +1,4 @@
+var fs = require('fs');
 var chai = require('chai');
 var expect = chai.expect;
 var nfl = require('../pay-me-daily-nfl');
@@ -19,6 +20,20 @@ describe('makeFanduelArray()', function() {
 			['RB', 'Le\'Veon Bell', 9300]
 		];
 		expect(nfl.makeFanduelArray(fanduelDataString)).to.eql(fanduelArray);
+	});
+});
+
+fs.readFile('fixtures/qbs.txt', { encoding: 'utf8' }, function(err, quarterbackData) {
+	describe('makePlayersArray()', function() {
+		it.skip('does something', function() {
+			var quarterbackProjectionColumn = 15;
+			var stuff = [
+				['Drew Brees', 25.14],
+				['Tom Brady', 23.96],
+				['Aaron Rodgers', 22.43]
+			];
+			expect(nfl.makePlayersArray(quarterbackData, quarterbackProjectionColumn)).to.eql(stuff);
+		});
 	});
 });
 
