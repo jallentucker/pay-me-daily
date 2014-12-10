@@ -10,6 +10,18 @@ var inefficientArray = [
 	['Joe Flacco', 19.91, 7800],
 ];
 
+describe('makeFanduelArray()', function() {
+	it('populates an array with the relevant data from the FanDuel data string', function() {
+		var fanduelDataString = '{"6894":["QB","Aaron Rodgers","86910","23","39","10400",23.5,"12",false,4,"","recent",""],"11432":["WR","Demaryius Thomas","86906","13","1000","9400",19.3,"12",false,2,"Ankle","recent","probable"],"28181":["RB","Le\'Veon Bell","86783","5","1000","9300",19.3,"12",false,0,"","recent",""]}';
+		var fanduelArray = [
+			['QB', 'Aaron Rodgers', 10400],
+			['WR', 'Demaryius Thomas', 9400],
+			['RB', 'Le\'Veon Bell', 9300]
+		];
+		expect(nfl.makeFanduelArray(fanduelDataString)).to.eql(fanduelArray);
+	});
+});
+
 describe('prepareEfficientArray()', function() {
 	it('parses an inefficient array', function() {
 		var efficientArray = [

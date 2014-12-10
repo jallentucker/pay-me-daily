@@ -18,7 +18,7 @@ var lineups = 0;
 // returns an array. The array includes elements representing each player available to the user when
 // playing the relevant FanDuel.com game. Each element is itself an array, consisting of the player's
 // position, name, and salary on FanDuel.com.
-var makeFanduelArray = function(dataString) {
+var makeFanduelArray = module.exports.makeFanduelArray = function(dataString) {
 	var json = JSON.parse(dataString);
 	var fanduelArray = _.values(json).map(function(playerArray) {
 		return [playerArray[0], playerArray[1], parseInt(playerArray[5])];
