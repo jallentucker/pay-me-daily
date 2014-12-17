@@ -24,9 +24,31 @@
 	        </div>
 	    </nav>
 
+	    {{outlet}}
+
 	    <footer class="row">
 	        <p><a href="http://www.joshuatuckerpdx.com"><small>joshuatuckerpdx.com</small></a></p>
 	    </footer>
+	</div>
+</script>
+
+<script type="text/x-handlebars" id="components/single-player">
+	{{position}}
+	{{name}}
+	{{projection}}
+	{{salary}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="index">
+	<div class="row">
+        <div class="col-sm-8 col-sm-offset-2 splash">
+			<h2>Week 16 Top Lineups</h2>
+			<h4>Lineup 1</h4>
+			{{#each}}
+				{{#single-player position=position name=name projection=projection salary=salary}}
+				{{/single-player}}
+			{{/each}}
+		</div>
 	</div>
 </script>
 
